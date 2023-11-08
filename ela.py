@@ -1,5 +1,5 @@
 import cv2
-import numpy as np
+import os
 
 # read image
 img1 = cv2.imread("samples/zebra.png")
@@ -8,6 +8,9 @@ img1 = cv2.imread("samples/zebra.png")
 jpg_quality1 = 95
 jpg_quality2 = 90
 scale = 25
+
+# create output folder
+os.makedirs("out")
 
 # write img1 at 95% jpg compression
 cv2.imwrite("out/c95.jpg", img1, [cv2.IMWRITE_JPEG_QUALITY, jpg_quality1])
