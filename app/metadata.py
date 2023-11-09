@@ -23,8 +23,7 @@ def find_metadata(img_path: str) -> None:
     m_ti = time.ctime(ti_m)
 
     print(
-        f"The file located at the path {img_path} was created at {c_ti} "
-        f"and was lsst modified at {m_ti}",
+        f"The file located at the path {img_path} was created at {c_ti} " f"and was lsst modified at {m_ti}",
     )
     print("#" * 20)
     print()
