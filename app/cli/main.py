@@ -24,11 +24,11 @@ def check_datetime_fields(exif: dict[str, t.Any]) -> None:
 
     # checking datetime original tag
     datetime_format = "%Y:%m:%d %H:%M:%S"
-    img_datetime_original = datetime.datetime.strptime(exif["DateTimeOriginal"], datetime_format)
+    img_datetime_original = datetime.datetime.strptime(exif["DateTimeOriginal"], datetime_format).astimezone()
     print(f"Image was taken at {img_datetime_original}\n")
 
     # comparing datetime original and datetime tags
-    img_datetime = datetime.datetime.strptime(exif["DateTime"], datetime_format)
+    img_datetime = datetime.datetime.strptime(exif["DateTime"], datetime_format).astimezone()
 
     if img_datetime != img_datetime_original:
         delta = img_datetime - img_datetime_original
@@ -36,7 +36,7 @@ def check_datetime_fields(exif: dict[str, t.Any]) -> None:
             f"DateTimeOriginal exif tag doesn't match the DateTime exif tag, it's off by {delta}. "
             f"DateTimeOriginal tag usually contains the information about date and time when the image was made, while "
             f"DateTime tag usually contains the information about the date and time of last image editing. It can "
-            f"indicate that [red]image was edited![red]\n"
+            f"indicate that [red]image was edited![red]\n",
         )
 
 
@@ -46,7 +46,7 @@ def check_editing_software(exif: dict[str, t.Any]) -> None:
         if part.lower() in exif["Software"].lower():
             print(
                 f"Editing software tag was detected: {exif['Software']}. It can indicate that "
-                f"[red]image was edited![red]\n"
+                f"[red]image was edited![red]\n",
             )
 
 
