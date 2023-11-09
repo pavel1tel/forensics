@@ -27,9 +27,12 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 
+[tool.poetry.scripts]
+image_scan = "app.cli.main:app"
+
 [tool.ruff]
 # Refer to this rules if you need to config any submodule with ruff: https://beta.ruff.rs/docs/rules/
-
+line-length = 120
 select = [
     "E",    # pycodestyle errors,
     "W",    # pycodestyle warnings
