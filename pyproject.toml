@@ -1,0 +1,95 @@
+[tool.poetry]
+name = "forensics"
+version = "0.1.0"
+description = "Digital forensics project. A tool that scans images for authenticity."
+authors = [
+    "Rostyslav Borovyk <rrostyslavborovyk@gmail.com>",
+    "Ivashchenko Pavlo <pawloiwanov@gmail.com>",
+]
+readme = "README.md"
+
+packages = [{include = "app"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pillow = "^10.1.0"
+opencv-python = "^4.8.1.78"
+typer = {extras = ["all"], version = "^0.9.0"}
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.11.0"
+ruff = "^0.1.5"
+mypy = "^1.6.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.ruff]
+# Refer to this rules if you need to config any submodule with ruff: https://beta.ruff.rs/docs/rules/
+
+select = [
+    "E",    # pycodestyle errors,
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "T20",  # flake8-print
+    "Q",    # flake8-quotes
+    "B",    # flake8-bugbear
+    "C",    # flake8-comprehensions
+    "S",    # flake8-bandit
+    "ANN",  # flake8-annotations
+    "COM",  # flake8-commas
+    "A",   # flake8-builtins
+    "C4",   # flake8-comprehensions
+    "DTZ",  # flake8-datetimez
+    "PIE",  # flake8-pie
+    "SIM",  # flake8-simplify
+    "TID",  # flake8-tidy-imports
+    "C90",  # mccabe
+    "UP",   # pyupgrade
+    "ERA",  # eradicate
+    "UP",  # eradicate
+    "YTT",  # eradicate
+#    "D",    # pydocstyle
+
+]
+
+ignore = [
+    "B008",   # do not perform function calls in argument defaults
+    "S101",   # use of assert detected
+    "B904",   # allow raise without from inside except
+    "ANN401", # allow using typing.Any
+    "ANN101", # allow using self without annotation
+    "ANN102", # allow using cls without annotation
+    "S324",   # allow use of insucure hash function
+    "T201",   # allow print
+    "N813",   # camel case imports
+]
+
+
+include = [
+    "app/**/*.py",
+]
+
+[tool.black]
+line-length = 120
+target-version = ['py310']
+
+[tool.mypy]
+
+python_version = "3.10"
+ignore_missing_imports = true
+no_implicit_optional = true
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_decorators = true
+disallow_any_generics = true
+check_untyped_defs = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unused_ignores = true
