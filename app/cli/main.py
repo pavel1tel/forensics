@@ -6,9 +6,13 @@ import rich
 import typer
 from PIL import ExifTags, Image
 
-from app.cli.inspectors import inspect_datetime_fields, inspect_editing_software, inspect_osx_metadata
-
-from app.cli.utils import print_error_and_exit, download_images, print_header, filter_images_from_paths, TMP_FOLDER
+from app.cli.inspectors import (
+    inspect_copyright,
+    inspect_datetime_fields,
+    inspect_editing_software,
+    inspect_osx_metadata,
+)
+from app.cli.utils import TMP_FOLDER, download_images, filter_images_from_paths, print_error_and_exit, print_header
 
 app = typer.Typer()
 
@@ -31,9 +35,9 @@ PathAnnotation = t.Annotated[
 
 
 @app.command(
-    help="Cleans all the files that were added during the scanning, e.g. downloaded images from the URL"
+    help="Cleans all the files that were added during the scanning, e.g. downloaded images from the URL",
 )
-def clean():
+def clean() -> None:
     """To be implemented"""
 
 
@@ -45,6 +49,7 @@ def scan_image(path: PathAnnotation | str) -> None:
         exif = {ExifTags.TAGS[k]: v for k, v in raw_exif.items() if k in ExifTags.TAGS}
         inspect_datetime_fields(exif)
         inspect_editing_software(exif)
+        inspect_copyright(exif)
     else:
         rich.print("No exif metadata fields found!\n")
 

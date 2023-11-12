@@ -6,7 +6,6 @@ import rich
 import typer
 from osxmetadata import OSXMetaData
 
-
 EDITING_SOFTWARE_TAG_PARTS = [
     "GIMP",
     "Photoshop",
@@ -33,7 +32,7 @@ def inspector_wrapper(f: t.Callable[P, R]) -> t.Callable[P, R | None]:
         try:
             return f(*args, **kwargs)
         except Exception as e:
-            rich.print(f"Error when performing {f.__name__} check", e)
+            rich.print(f"Error when performing {f.__name__} check", str(e), "\n")
             return None
 
     return inner
@@ -41,8 +40,6 @@ def inspector_wrapper(f: t.Callable[P, R]) -> t.Callable[P, R | None]:
 
 @inspector_wrapper
 def inspect_datetime_fields(exif: dict[str, t.Any]) -> None:
-    rich.print("[green]Checking datetime fields...[/green]")
-
     # checking datetime original tag
     datetime_format = "%Y:%m:%d %H:%M:%S"
     img_datetime_original = datetime.datetime.strptime(exif["DateTimeOriginal"], datetime_format).astimezone()
@@ -63,7 +60,6 @@ def inspect_datetime_fields(exif: dict[str, t.Any]) -> None:
 
 @inspector_wrapper
 def inspect_editing_software(exif: dict[str, t.Any]) -> None:
-    rich.print("[green]Checking editing software fields...[/green]")
     for part in EDITING_SOFTWARE_TAG_PARTS:
         if part.lower() in exif["Software"].lower():
             rich.print(
@@ -73,8 +69,13 @@ def inspect_editing_software(exif: dict[str, t.Any]) -> None:
 
 
 @inspector_wrapper
-def inspect_osx_metadata(path: PathAnnotation) -> None:
-    rich.print("[green]Checking xattr fields...[/green]")
+def inspect_copyright(exif: dict[str, t.Any]) -> None:
+    if copyright_ := exif.get("Copyright"):
+        rich.print(f"Copyright tag is present with the value {copyright_}\n")
+
+
+@inspector_wrapper
+def inspect_osx_metadata(path: PathAnnotation | str) -> None:
     md = OSXMetaData(str(path))
     md_dict = md.asdict()
 

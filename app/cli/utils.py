@@ -1,15 +1,13 @@
 import os
+from urllib.parse import urljoin
 
+import requests
 import rich
 import typer
-import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
-from PIL import Image
-from io import BytesIO
 
 IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg"]
-TMP_FOLDER = "./tmp/"
+TMP_FOLDER = "./tmp"
 DOWNLOAD_CHUNK_SIZE = 8192
 
 
@@ -30,46 +28,28 @@ def filter_images_from_paths(paths: list[str]) -> list[str]:
     return [path for path in paths if any(path.endswith(ext) for ext in IMAGE_EXTENSIONS)]
 
 
-def get_images_from_url(url: str) -> list[str]:
+def get_images_from_url(url: str) -> list[str]:  # type: ignore[return]
     response = requests.get(url)
     if response.status_code == 200:
-        soup = BeautifulSoup(response.content, 'html.parser')
-        img_tags = soup.find_all('img')
-        potential_img_urls = [urljoin(url, img_tag['src']) for img_tag in img_tags]
+        soup = BeautifulSoup(response.content, "html.parser")
+        img_tags = soup.find_all("img")
+        potential_img_urls = [urljoin(url, img_tag["src"]) for img_tag in img_tags]
         return filter_images_from_paths(potential_img_urls)
     else:
         print_error_and_exit(f"Failed to retrieve the webpage. Status code: {response.status_code}")
 
 
-#
-# def download_image(url: str) -> str:
-#     img_name = url.split("/")[-1]
-#     save_path = TMP_FOLDER + img_name
-#
-#     response = requests.get(url, stream=True)
-#     if response.status_code != 200:
-#         print_warning(f"Failed to download image. Status code: {response.status_code}")
-#
-#     with open(save_path, 'wb') as file:
-#         for chunk in response.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
-#             file.write(chunk)
-#
-#     return save_path
-
 def download_image(url: str) -> str:
     img_name = url.split("/")[-1]
-    save_path = TMP_FOLDER + img_name
+    save_path = TMP_FOLDER + "/" + img_name
 
-    response = requests.get(url)
+    response = requests.get(url, stream=True)
     if response.status_code != 200:
         print_warning(f"Failed to download image. Status code: {response.status_code}")
 
-    img = Image.open(BytesIO(response.content))
-    if exif := img.info.get("exif"):
-        print("Exif !! ", exif)
-        img.save(save_path, exif=img.info.get("exif"))
-    else:
-        img.save(save_path)
+    with open(save_path, "wb") as file:
+        for chunk in response.iter_content(chunk_size=DOWNLOAD_CHUNK_SIZE):
+            file.write(chunk)
 
     return save_path
 
@@ -88,5 +68,5 @@ def download_images(url: str, limit: int = 10) -> list[str]:
     return img_paths
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     download_images("https://www.vu.lt/")

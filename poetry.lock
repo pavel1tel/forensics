@@ -739,31 +739,6 @@ files = [
 ]
 
 [[package]]
-name = "pyexiv2"
-version = "2.5.0"
-description = "Read/Write metadata(including EXIF, IPTC, XMP), comment and ICC Profile embedded in digital images."
-optional = false
-python-versions = ">=3.5"
-files = [
-    {file = "pyexiv2-2.5.0-cp35-none-macosx_10_14_x86_64.whl", hash = "sha256:7fab947b7b6a34947573db845b2d5637e214df6413e05f0c6eb016c768537787"},
-    {file = "pyexiv2-2.5.0-cp35-none-manylinux1_x86_64.whl", hash = "sha256:cdab46bc5fa148244d3158f3777cb78970cb043bc9b69eba78953bf1d558b1e3"},
-    {file = "pyexiv2-2.5.0-cp35-none-win_amd64.whl", hash = "sha256:c4ff751432f8fef3f4f2eb3617ded7fc6e3cdd280ed1f69fa1d4b24f03a46115"},
-    {file = "pyexiv2-2.5.0-cp36-none-macosx_10_14_x86_64.whl", hash = "sha256:85cefeb70012dd2ba19da0aa0bb571aad03146af3cae06d7ea681555d562547d"},
-    {file = "pyexiv2-2.5.0-cp36-none-manylinux1_x86_64.whl", hash = "sha256:af469af90115cb4223f896144f5b5d7aad7388a6382f7c16468a6f6da32782ec"},
-    {file = "pyexiv2-2.5.0-cp36-none-win_amd64.whl", hash = "sha256:d685427dd2d67bb5bebe68fca2e3e06287b3b39bded4a130e1f30cc04b2a59ea"},
-    {file = "pyexiv2-2.5.0-cp37-none-macosx_10_14_x86_64.whl", hash = "sha256:d4298ae5285f20190f64ebed8be805f86ab88fb332af7f356f8cc3fd16207b2e"},
-    {file = "pyexiv2-2.5.0-cp37-none-manylinux1_x86_64.whl", hash = "sha256:5a7613e776a8af28106ae092a84b9e0c7da915511f4891c27ec7a670842d6468"},
-    {file = "pyexiv2-2.5.0-cp37-none-win_amd64.whl", hash = "sha256:9d98964a24cee893383f547982a759641e0e8a3f3500f88abaf2eb15bf33f5c6"},
-    {file = "pyexiv2-2.5.0-cp38-none-macosx_10_14_x86_64.whl", hash = "sha256:3800979355e7c289d34dee04bdce03a0cdb2d1c929052a541201730dd1ff49a3"},
-    {file = "pyexiv2-2.5.0-cp38-none-manylinux1_x86_64.whl", hash = "sha256:5fddf62391c20a57664e2c3d927e60ef984c65c1437767fa5135f1b9efd14400"},
-    {file = "pyexiv2-2.5.0-cp38-none-win_amd64.whl", hash = "sha256:44af25456aeff9d48a1c382ea9c6ed8229baa9450619cc5e288203aa5c717403"},
-    {file = "pyexiv2-2.5.0-cp39-none-macosx_10_14_x86_64.whl", hash = "sha256:1197e1b4837676a98f1df2bd1c297b3040baa88a0caee569cfe48b808d585d9d"},
-    {file = "pyexiv2-2.5.0-cp39-none-manylinux1_x86_64.whl", hash = "sha256:fa42317be8500599b81dda983a0527ab9895b890a924f6d593b63e177c087f64"},
-    {file = "pyexiv2-2.5.0-cp39-none-win_amd64.whl", hash = "sha256:1ffa7c599a121671ce3984f86f20fa4a30fbc37713cfbca00ba450017a4a475e"},
-    {file = "pyexiv2-2.5.0.tar.gz", hash = "sha256:a86e68de0706da6402609bc8be1c643344efe8807c85ecb6779abc219afa1e5e"},
-]
-
-[[package]]
 name = "pygments"
 version = "2.16.1"
 description = "Pygments is a syntax highlighting package written in Python."
@@ -1101,6 +1076,20 @@ doc = ["cairosvg (>=2.5.2,<3.0.0)", "mdx-include (>=1.4.1,<2.0.0)", "mkdocs (>=1
 test = ["black (>=22.3.0,<23.0.0)", "coverage (>=6.2,<7.0)", "isort (>=5.0.6,<6.0.0)", "mypy (==0.910)", "pytest (>=4.4.0,<8.0.0)", "pytest-cov (>=2.10.0,<5.0.0)", "pytest-sugar (>=0.9.4,<0.10.0)", "pytest-xdist (>=1.32.0,<4.0.0)", "rich (>=10.11.0,<14.0.0)", "shellingham (>=1.3.0,<2.0.0)"]
 
 [[package]]
+name = "types-requests"
+version = "2.31.0.10"
+description = "Typing stubs for requests"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "types-requests-2.31.0.10.tar.gz", hash = "sha256:dc5852a76f1eaf60eafa81a2e50aefa3d1f015c34cf0cba130930866b1b22a92"},
+    {file = "types_requests-2.31.0.10-py3-none-any.whl", hash = "sha256:b32b9a86beffa876c0c3ac99a4cd3b8b51e973fb8e3bd4e0a6bb32c7efad80fc"},
+]
+
+[package.dependencies]
+urllib3 = ">=2"
+
+[[package]]
 name = "typing-extensions"
 version = "4.8.0"
 description = "Backported and Experimental Type Hints for Python 3.8+"
@@ -1229,4 +1218,4 @@ cffi = ">=1.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<=3.12"
-content-hash = "27327b4e246bf718dc0947cc13eecf8e8cb9362be2b2792ea7b191a24969759d"
+content-hash = "fc660b48c6dee46275a95c34818c48c362c0cd42098fe9ea52b5e76ffb79f213"
