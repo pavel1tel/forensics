@@ -6,6 +6,7 @@ import rich
 import typer
 from osxmetadata import OSXMetaData
 
+
 EDITING_SOFTWARE_TAG_PARTS = [
     "GIMP",
     "Photoshop",
@@ -27,7 +28,7 @@ P = t.ParamSpec("P")
 R = t.TypeVar("R")
 
 
-def checker_wrapper(f: t.Callable[P, R]) -> t.Callable[P, R | None]:
+def inspector_wrapper(f: t.Callable[P, R]) -> t.Callable[P, R | None]:
     def inner(*args: P.args, **kwargs: P.kwargs) -> R | None:
         try:
             return f(*args, **kwargs)
@@ -38,8 +39,8 @@ def checker_wrapper(f: t.Callable[P, R]) -> t.Callable[P, R | None]:
     return inner
 
 
-@checker_wrapper
-def check_datetime_fields(exif: dict[str, t.Any]) -> None:
+@inspector_wrapper
+def inspect_datetime_fields(exif: dict[str, t.Any]) -> None:
     rich.print("[green]Checking datetime fields...[/green]")
 
     # checking datetime original tag
@@ -60,8 +61,8 @@ def check_datetime_fields(exif: dict[str, t.Any]) -> None:
         )
 
 
-@checker_wrapper
-def check_editing_software(exif: dict[str, t.Any]) -> None:
+@inspector_wrapper
+def inspect_editing_software(exif: dict[str, t.Any]) -> None:
     rich.print("[green]Checking editing software fields...[/green]")
     for part in EDITING_SOFTWARE_TAG_PARTS:
         if part.lower() in exif["Software"].lower():
@@ -71,10 +72,10 @@ def check_editing_software(exif: dict[str, t.Any]) -> None:
             )
 
 
-@checker_wrapper
-def check_osx_metadata(file_path: PathAnnotation) -> None:
+@inspector_wrapper
+def inspect_osx_metadata(path: PathAnnotation) -> None:
     rich.print("[green]Checking xattr fields...[/green]")
-    md = OSXMetaData(str(file_path))
+    md = OSXMetaData(str(path))
     md_dict = md.asdict()
 
     if where_froms := md_dict["kMDItemWhereFroms"]:

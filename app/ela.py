@@ -3,7 +3,7 @@ import os
 import cv2
 
 # read image
-img1 = cv2.imread("../samples/zebra.png")
+img1 = cv2.imread("samples/zebra.png")
 
 # set compression and scale
 jpg_quality1 = 95
