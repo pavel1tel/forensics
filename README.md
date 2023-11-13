@@ -25,4 +25,8 @@ $ poetry install
 $ image_scan scan --path app/exif_samples/Canon_40D.jpg
 
 $ image_scan scan --path app/samples/acceptance.jpeg
+
+$ image_scan ela --path app/samples/queen.png
+
+$ image_scan ela --path app/samples/queen2.jpg
 ```

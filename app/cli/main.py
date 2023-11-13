@@ -6,13 +6,21 @@ import rich
 import typer
 from PIL import ExifTags, Image
 
+from app.cli.ela import generate_ela
 from app.cli.inspectors import (
     inspect_copyright,
     inspect_datetime_fields,
     inspect_editing_software,
     inspect_osx_metadata,
 )
-from app.cli.utils import TMP_FOLDER, download_images, filter_images_from_paths, print_error_and_exit, print_header
+from app.cli.utils import (
+    TMP_FOLDER,
+    download_images,
+    filter_images_from_paths,
+    print_error_and_exit,
+    print_header,
+    print_success,
+)
 
 app = typer.Typer()
 
@@ -66,6 +74,16 @@ def scan_path(path: PathAnnotation | str) -> None:
             scan_image(f"{path}/{img_path}")
     else:
         scan_image(path)
+
+
+@app.command()
+def ela(path: PathAnnotation) -> None:
+    if not os.path.exists(path):
+        print_error_and_exit("file does not exist under the specified path!")
+
+    generate_ela(str(path))
+
+    print_success("ELA images were successfully generated!")
 
 
 @app.command()

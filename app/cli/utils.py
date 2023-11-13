@@ -24,6 +24,10 @@ def print_header(msg: str) -> None:
     rich.print(f"\n[green]{msg}[/green]\n")
 
 
+def print_success(msg: str) -> None:
+    rich.print(f"[green]{msg}[/green]")
+
+
 def filter_images_from_paths(paths: list[str]) -> list[str]:
     return [path for path in paths if any(path.endswith(ext) for ext in IMAGE_EXTENSIONS)]
 
