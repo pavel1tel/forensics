@@ -6,6 +6,8 @@ import rich
 import typer
 from osxmetadata import OSXMetaData
 
+from app.cli.utils import print_header, print_warning
+
 EDITING_SOFTWARE_TAG_PARTS = [
     "GIMP",
     "Photoshop",
@@ -41,9 +43,17 @@ def inspector_wrapper(f: t.Callable[P, R]) -> t.Callable[P, R | None]:
 @inspector_wrapper
 def inspect_datetime_fields(exif: dict[str, t.Any]) -> None:
     # checking datetime original tag
+    print_header("Analysing datetime fields")
     datetime_format = "%Y:%m:%d %H:%M:%S"
+
+    if "DateTimeOriginal" not in exif:
+        return
+
     img_datetime_original = datetime.datetime.strptime(exif["DateTimeOriginal"], datetime_format).astimezone()
     rich.print(f"Image was taken at {img_datetime_original}\n")
+
+    if "DateTime" not in exif:
+        return
 
     # comparing datetime original and datetime tags
     img_datetime = datetime.datetime.strptime(exif["DateTime"], datetime_format).astimezone()
@@ -54,31 +64,36 @@ def inspect_datetime_fields(exif: dict[str, t.Any]) -> None:
             f"DateTimeOriginal exif tag doesn't match the DateTime exif tag, it's off by {delta}. "
             f"DateTimeOriginal tag usually contains the information about date and time when the image was made, while "
             f"DateTime tag usually contains the information about the date and time of last image editing. It can "
-            f"indicate that [red]image was edited![red]\n",
+            f"indicate that [red]image was edited![red]",
         )
 
 
 @inspector_wrapper
 def inspect_editing_software(exif: dict[str, t.Any]) -> None:
+    print_header("Analysing editing software fields")
     for part in EDITING_SOFTWARE_TAG_PARTS:
         if part.lower() in exif["Software"].lower():
             rich.print(
                 f"Editing software tag was detected: {exif['Software']}. It can indicate that "
-                f"[red]image was edited![/red]\n",
+                f"[red]image was edited![/red]",
             )
 
 
 @inspector_wrapper
 def inspect_copyright(exif: dict[str, t.Any]) -> None:
+    print_header("Analysing copyright field")
     if copyright_ := exif.get("Copyright"):
         rich.print(f"Copyright tag is present with the value {copyright_}\n")
+    else:
+        print_warning("No copyright tags present")
 
 
 @inspector_wrapper
 def inspect_osx_metadata(path: PathAnnotation | str) -> None:
+    print_header("Analysing osxmetadata fields")
+
     md = OSXMetaData(str(path))
     md_dict = md.asdict()
-
     if where_froms := md_dict["kMDItemWhereFroms"]:
         rich.print("'kMDItemWhereFroms' tag was detected with the following sources: ")
         for wf in where_froms:
@@ -87,3 +102,5 @@ def inspect_osx_metadata(path: PathAnnotation | str) -> None:
             "Check that the source is trusted website, in case the website looks like an untrusted source, it may "
             "indicate that the [red]image was fabricated![/red]",
         )
+    else:
+        print_warning("No kMDItemWhereFroms tag present")

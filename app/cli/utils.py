@@ -1,4 +1,5 @@
 import os
+import shutil
 from urllib.parse import urljoin
 
 import requests
@@ -11,21 +12,34 @@ TMP_FOLDER = "./tmp"
 DOWNLOAD_CHUNK_SIZE = 8192
 
 
+def _center_in_the_terminal(msg: str) -> str:
+    terminal_width, _ = shutil.get_terminal_size()
+    return f" {msg} ".center(terminal_width, "=")
+
+
 def print_error_and_exit(msg: str) -> None:
-    rich.print(f"[red]{msg}[/red]")
+    rich.print(f"[red]{_center_in_the_terminal(msg)}[/red]")
     raise typer.Exit(code=1)
 
 
 def print_warning(msg: str) -> None:
-    rich.print(f"[orange]{msg}[/orange]")
+    rich.print(f"[yellow]{msg}[/yellow]")
 
 
 def print_header(msg: str) -> None:
-    rich.print(f"\n[green]{msg}[/green]\n")
+    rich.print(f"\n[green]{_center_in_the_terminal(msg)}[/green]\n")
+
+
+def print_sub_header(msg: str) -> None:
+    rich.print(f"{msg}")
+
+
+def print_list_item(msg: str) -> None:
+    rich.print(f"    - {msg}")
 
 
 def print_success(msg: str) -> None:
-    rich.print(f"[green]{msg}[/green]")
+    rich.print(f"[green]{_center_in_the_terminal(msg)}[/green]")
 
 
 def filter_images_from_paths(paths: list[str]) -> list[str]:

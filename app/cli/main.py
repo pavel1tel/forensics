@@ -19,7 +19,7 @@ from app.cli.utils import (
     filter_images_from_paths,
     print_error_and_exit,
     print_header,
-    print_success,
+    print_success, print_sub_header, print_list_item,
 )
 
 app = typer.Typer()
@@ -51,6 +51,11 @@ def clean() -> None:
 
 def scan_image(path: PathAnnotation | str) -> None:
     print_header(f"Scanning image {path}")
+    print_sub_header("The following features will be analysed:")
+    print_list_item("exif datetime fields")
+    print_list_item("exif editing software fields")
+    print_list_item("exif copyright field")
+    print_list_item("osxmetadata fields")
 
     img = Image.open(path)
     if raw_exif := img._getexif():
@@ -62,6 +67,7 @@ def scan_image(path: PathAnnotation | str) -> None:
         rich.print("No exif metadata fields found!\n")
 
     inspect_osx_metadata(path)
+    print_header("Finished analysis!")
 
 
 def scan_path(path: PathAnnotation | str) -> None:
