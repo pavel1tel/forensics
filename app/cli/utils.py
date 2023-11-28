@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 
 IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg"]
 TMP_FOLDER = "./tmp"
-DOWNLOAD_CHUNK_SIZE = 8192
+DOWNLOAD_CHUNK_SIZE = 2**14
 
 
 def _center_in_the_terminal(msg: str) -> str:

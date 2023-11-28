@@ -11,6 +11,7 @@ from app.cli.inspectors import (
     inspect_copyright,
     inspect_datetime_fields,
     inspect_editing_software,
+    inspect_gps,
     inspect_osx_metadata,
 )
 from app.cli.utils import (
@@ -19,7 +20,9 @@ from app.cli.utils import (
     filter_images_from_paths,
     print_error_and_exit,
     print_header,
-    print_success, print_sub_header, print_list_item,
+    print_list_item,
+    print_sub_header,
+    print_success,
 )
 
 app = typer.Typer()
@@ -50,12 +53,7 @@ def clean() -> None:
 
 
 def scan_image(path: PathAnnotation | str) -> None:
-    print_header(f"Scanning image {path}")
-    print_sub_header("The following features will be analysed:")
-    print_list_item("exif datetime fields")
-    print_list_item("exif editing software fields")
-    print_list_item("exif copyright field")
-    print_list_item("osxmetadata fields")
+    print_header(f"Started scanning image {path}")
 
     img = Image.open(path)
     if raw_exif := img._getexif():
@@ -63,11 +61,12 @@ def scan_image(path: PathAnnotation | str) -> None:
         inspect_datetime_fields(exif)
         inspect_editing_software(exif)
         inspect_copyright(exif)
+        inspect_gps(exif)
     else:
         rich.print("No exif metadata fields found!\n")
 
     inspect_osx_metadata(path)
-    print_header("Finished analysis!")
+    print_header(f"Finished scanning image {path}")
 
 
 def scan_path(path: PathAnnotation | str) -> None:
@@ -102,6 +101,13 @@ def scan(
 
     if path and url:
         print_error_and_exit("only one of the --path or --url params should be specified!")
+
+    print_header(f"Started image scanner")
+    print_sub_header("The following features will be analysed:")
+    print_list_item("exif datetime fields")
+    print_list_item("exif editing software fields")
+    print_list_item("exif copyright field")
+    print_list_item("osxmetadata fields")
 
     if path:
         if not os.path.exists(path):

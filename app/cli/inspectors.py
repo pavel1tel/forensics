@@ -77,6 +77,8 @@ def inspect_editing_software(exif: dict[str, t.Any]) -> None:
                 f"Editing software tag was detected: {exif['Software']}. It can indicate that "
                 f"[red]image was edited![/red]",
             )
+            return
+    print_warning("No editing software fields present")
 
 
 @inspector_wrapper
@@ -86,6 +88,24 @@ def inspect_copyright(exif: dict[str, t.Any]) -> None:
         rich.print(f"Copyright tag is present with the value {copyright_}\n")
     else:
         print_warning("No copyright tags present")
+
+
+def _format_coord(parts: tuple[t.Any]) -> str:
+    casted_parts = [float(i) for i in parts]
+    return f"{casted_parts[0]:.2f}°{casted_parts[1]:.2f}'{casted_parts[2]:.2f}\""
+
+
+@inspector_wrapper
+def inspect_gps(exif: dict[str, t.Any]) -> None:
+    print_header("Analysing GPS fields")
+    if gps := exif.get("GPSInfo"):
+        gps_parts = [v for _, v in gps.items()][:4]
+        rich.print(
+            f"Coordinates: "
+            f"{gps_parts[0]}: {_format_coord(gps_parts[1])} {gps_parts[2]}: {_format_coord(gps_parts[3])} ",
+        )
+    else:
+        print_warning("No GPS fields present")
 
 
 @inspector_wrapper
