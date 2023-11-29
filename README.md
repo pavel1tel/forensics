@@ -1,5 +1,23 @@
 # Image scanner
 
+# Usage
+
+## Installation
+
+### Install the package using **pip**
+
+```shell
+pip install git+https://github.com/pavel1tel/forensics.git
+```
+
+### Install the package using **poetry**
+
+```shell
+poetry add git+https://github.com/pavel1tel/forensics.git
+```
+
+# Development
+
 ## Installation
 
 ###  1. Install the [poetry](https://python-poetry.org/)
@@ -14,7 +32,12 @@ $ brew install poetry
 $ apt-get install poetry
 ```
 
-### 2. Install the dependencies
+### 2. Clone the repository
+```shell
+$ git clone https://github.com/pavel1tel/forensics
+```
+
+### 3. Install the dependencies
 ```shell
 $ poetry install
 ```
@@ -29,4 +52,6 @@ $ image_scan scan --path app/samples/acceptance.jpeg
 $ image_scan ela --path app/samples/queen.png
 
 $ image_scan ela --path app/samples/queen2.jpg
+
+$ image_scan scan --path app/exif_samples/gps/DSCN0021.jpg
 ```

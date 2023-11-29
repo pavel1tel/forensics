@@ -22,7 +22,7 @@ from app.cli.utils import (
     print_header,
     print_list_item,
     print_sub_header,
-    print_success,
+    print_success, is_osxmetadata_package_present,
 )
 
 app = typer.Typer()
@@ -81,7 +81,9 @@ def scan_path(path: PathAnnotation | str) -> None:
         scan_image(path)
 
 
-@app.command()
+@app.command(
+    help="Run the Error Level Analysis (ELA) scan",
+)
 def ela(path: PathAnnotation) -> None:
     if not os.path.exists(path):
         print_error_and_exit("file does not exist under the specified path!")
@@ -91,7 +93,9 @@ def ela(path: PathAnnotation) -> None:
     print_success("ELA images were successfully generated!")
 
 
-@app.command()
+@app.command(
+    help="Run the metadata fields analysis scan",
+)
 def scan(
     path: PathAnnotation | None = None,
     url: str | None = None,
@@ -107,7 +111,8 @@ def scan(
     print_list_item("exif datetime fields")
     print_list_item("exif editing software fields")
     print_list_item("exif copyright field")
-    print_list_item("osxmetadata fields")
+    if is_osxmetadata_package_present():
+        print_list_item("osxmetadata fields")
 
     if path:
         if not os.path.exists(path):

@@ -4,7 +4,7 @@ from pathlib import Path
 
 import rich
 import typer
-from osxmetadata import OSXMetaData
+import platform
 
 from app.cli.utils import print_header, print_warning
 
@@ -111,6 +111,18 @@ def inspect_gps(exif: dict[str, t.Any]) -> None:
 @inspector_wrapper
 def inspect_osx_metadata(path: PathAnnotation | str) -> None:
     print_header("Analysing osxmetadata fields")
+
+    if platform.system() == "Darwin":
+        try:
+            from osxmetadata import OSXMetaData
+        except ImportError:
+            print_warning(
+                "To perform the OSX specific fields analysis install the full "
+                "version of the package with `osxmetadata` dependency"
+            )
+            return
+    else:
+        return
 
     md = OSXMetaData(str(path))
     md_dict = md.asdict()

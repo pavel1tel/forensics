@@ -15,7 +15,6 @@ python = ">=3.9,<=3.12"
 pillow = "^10.1.0"
 opencv-python = "^4.8.1.78"
 typer = {extras = ["all"], version = "^0.9.0"}
-osxmetadata = {version = "^1.3.2", optional = true}
 requests = "^2.31.0"
 bs4 = "^0.0.1"
 

@@ -1,4 +1,5 @@
 import os
+import platform
 import shutil
 from urllib.parse import urljoin
 
@@ -10,6 +11,17 @@ from bs4 import BeautifulSoup
 IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg"]
 TMP_FOLDER = "./tmp"
 DOWNLOAD_CHUNK_SIZE = 2**14
+
+
+def is_osxmetadata_package_present() -> bool:
+    if platform.system() == "Darwin":
+        try:
+            from osxmetadata import OSXMetaData
+            return True
+        except ImportError:
+            return False
+    else:
+        return False
 
 
 def _center_in_the_terminal(msg: str) -> str:
