@@ -98,7 +98,7 @@ def ela(path: PathAnnotation) -> None:
 )
 def scan(
     path: PathAnnotation | None = None,
-    url: str | None = None,
+    url: t.Optional[str] = None,
 ) -> None:
     if not path and not url:
         print_error_and_exit("--path or --url param is required!")
