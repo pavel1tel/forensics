@@ -40,6 +40,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 image_scan = "app.cli.main:app"
+image_scan_setup = "app.cli.setup:setup"
 
 [tool.ruff]
 # Refer to this rules if you need to config any submodule with ruff: https://beta.ruff.rs/docs/rules/
@@ -83,6 +84,7 @@ ignore = [
     "S324",   # allow use of insucure hash function
     "T201",   # allow print
     "N813",   # camel case imports
+    "F401",
 ]
 
 

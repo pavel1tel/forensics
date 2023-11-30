@@ -17,6 +17,7 @@ def is_osxmetadata_package_present() -> bool:
     if platform.system() == "Darwin":
         try:
             from osxmetadata import OSXMetaData
+
             return True
         except ImportError:
             return False
@@ -56,6 +57,13 @@ def print_success(msg: str) -> None:
 
 def filter_images_from_paths(paths: list[str]) -> list[str]:
     return [path for path in paths if any(path.endswith(ext) for ext in IMAGE_EXTENSIONS)]
+
+
+def filter_images_or_directories_from_paths(parent_path: str, paths: list[str]) -> list[str]:
+    return [
+        path for path in paths
+        if any(path.endswith(ext) for ext in IMAGE_EXTENSIONS) or os.path.isdir(f"{parent_path}/{path}")
+    ]
 
 
 def get_images_from_url(url: str) -> list[str]:  # type: ignore[return]

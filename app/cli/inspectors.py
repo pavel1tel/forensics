@@ -1,10 +1,10 @@
 import datetime
+import platform
 import typing as t
 from pathlib import Path
 
 import rich
 import typer
-import platform
 
 from app.cli.utils import print_header, print_warning
 
@@ -75,9 +75,8 @@ def inspect_datetime_fields(exif: dict[str, t.Any]) -> None:
     return result
 
 
-# result -> {?Software[String], ?isEdited[0 || 1]}
 @inspector_wrapper
-def inspect_editing_software(exif: dict[str, t.Any]):
+def inspect_editing_software(exif: dict[str, t.Any]) -> list[str]:
     result = []
     print_header("Analysing editing software fields")
     for part in EDITING_SOFTWARE_TAG_PARTS:
@@ -91,9 +90,9 @@ def inspect_editing_software(exif: dict[str, t.Any]):
     print_warning("No editing software fields present")
     return []
 
-#result -> {?Copyright[String]}
+
 @inspector_wrapper
-def inspect_copyright(exif: dict[str, t.Any]) -> None:
+def inspect_copyright(exif: dict[str, t.Any]) -> list[str]:
     result = []
     print_header("Analysing copyright field")
     if copyright_ := exif.get("Copyright"):
@@ -109,9 +108,9 @@ def _format_coord(parts: tuple[t.Any]) -> str:
     casted_parts = [float(i) for i in parts]
     return f"{casted_parts[0]:.2f}°{casted_parts[1]:.2f}'{casted_parts[2]:.2f}\""
 
-#result -> {?Coord[String]} 
+
 @inspector_wrapper
-def inspect_gps(exif: dict[str, t.Any]) -> None:
+def inspect_gps(exif: dict[str, t.Any]) -> list[str]:
     result = []
     print_header("Analysing GPS fields")
     if gps := exif.get("GPSInfo"):
@@ -126,9 +125,9 @@ def inspect_gps(exif: dict[str, t.Any]) -> None:
         print_warning("No GPS fields present")
         return result
 
-#result -> {?hasSource[1]} 
+
 @inspector_wrapper
-def inspect_osx_metadata(path: PathAnnotation | str) -> None:
+def inspect_osx_metadata(path: PathAnnotation | str) -> list[str | int]:
     result = []
     print_header("Analysing osxmetadata fields")
 
@@ -138,7 +137,7 @@ def inspect_osx_metadata(path: PathAnnotation | str) -> None:
         except ImportError:
             print_warning(
                 "To perform the OSX specific fields analysis install the full "
-                "version of the package with `osxmetadata` dependency"
+                "version of the package with `osxmetadata` dependency",
             )
             return result
     else:

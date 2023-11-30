@@ -4,16 +4,28 @@
 
 ## Installation
 
-### Install the package using **pip**
+### 1.1. Install the package using **pip**
 
 ```shell
 pip install git+https://github.com/pavel1tel/forensics.git
 ```
 
-### Install the package using **poetry**
+### 1.2. Install the package using **poetry**
 
 ```shell
 poetry add git+https://github.com/pavel1tel/forensics.git
+```
+
+### 2. Run setup script 
+
+```shell
+$ image_scan_setup
+```
+
+### 3. Run scans
+
+```shell
+$ image_scan scan --path <path>
 ```
 
 # Development

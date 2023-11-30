@@ -5,7 +5,7 @@ from pathlib import Path
 import rich
 import typer
 from PIL import ExifTags, Image
-from app.cli.report import generateReport
+
 from app.cli.ela_nn.ela import check_ela
 from app.cli.inspectors import (
     inspect_copyright,
@@ -14,15 +14,17 @@ from app.cli.inspectors import (
     inspect_gps,
     inspect_osx_metadata,
 )
+from app.cli.report import generate_report
 from app.cli.utils import (
     TMP_FOLDER,
     download_images,
-    filter_images_from_paths,
+    filter_images_or_directories_from_paths,
+    is_osxmetadata_package_present,
     print_error_and_exit,
     print_header,
     print_list_item,
     print_sub_header,
-    print_success, is_osxmetadata_package_present,
+    print_success,
 )
 
 app = typer.Typer()
@@ -52,7 +54,7 @@ def clean() -> None:
     """To be implemented"""
 
 
-def scan_image(path: PathAnnotation | str) -> None:
+def scan_image(path: PathAnnotation | str) -> list[str]:
     print_header(f"Started scanning image {path}")
     result = []
     result.append(path)
@@ -71,15 +73,15 @@ def scan_image(path: PathAnnotation | str) -> None:
     return result
 
 
-def scan_path(path: PathAnnotation | str) -> None:
+def scan_path(path: PathAnnotation | str) -> list[list[str]]:
     result = []
     if os.path.isdir(path):
         print_header(f"Scanning directory {path}")
 
         paths = os.listdir(path)
-        img_paths = filter_images_from_paths(paths)
-        for img_path in img_paths:
-            result.append(scan_image(f"{path}/{img_path}"))
+        child_paths = filter_images_or_directories_from_paths(path, paths)
+        for child_path in child_paths:
+            result.append(scan_path(f"{path}/{child_path}"))
         return result
     else:
         result.append(scan_image(path))
@@ -111,7 +113,7 @@ def scan(
     if path and url:
         print_error_and_exit("only one of the --path or --url params should be specified!")
 
-    print_header(f"Started image scanner")
+    print_header("Started image scanner")
     print_sub_header("The following features will be analysed:")
     print_list_item("exif datetime fields")
     print_list_item("exif editing software fields")
@@ -123,12 +125,11 @@ def scan(
         if not os.path.exists(path):
             print_error_and_exit("file or directory does not exist under the specified path!")
         result = scan_path(path)
-        generateReport(result)
+        generate_report(result)
     if url:
         download_images(url)
         result = scan_path(TMP_FOLDER)
-        generateReport(result)
-
+        generate_report(result)
 
 
 if __name__ == "__main__":
