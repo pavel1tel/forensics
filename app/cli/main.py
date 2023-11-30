@@ -56,7 +56,6 @@ def clean() -> None:
 
 
 def scan_image(path: PathAnnotation | str) -> list[str]:
-    print_header(f"Started scanning image {path}")
     result = []
     result.append(path)
     img = Image.open(path)
@@ -66,19 +65,14 @@ def scan_image(path: PathAnnotation | str) -> list[str]:
         result.append(inspect_editing_software(exif))
         result.append(inspect_copyright(exif))
         result.append(inspect_gps(exif))
-    else:
-        rich.print("No exif metadata fields found!\n")
 
     result.append(inspect_osx_metadata(path))
-    print_header(f"Finished scanning image {path}")
     return result
 
 
 def scan_path(path: PathAnnotation | str) -> list[list[str]]:
     result = []
     if os.path.isdir(path):
-        print_header(f"Scanning directory {path}")
-
         paths = os.listdir(path)
         child_paths = filter_images_or_directories_from_paths(path, paths)
         for child_path in child_paths:
@@ -132,6 +126,8 @@ def scan(
         result = scan_path(DOWNLOAD_TMP_FOLDER)
         clear_downloaded_images()
         generate_report(result)
+
+    print_header("Finished image scanner")
 
 
 if __name__ == "__main__":
