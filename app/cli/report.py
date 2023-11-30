@@ -1,7 +1,8 @@
 import itertools
 import os
 import typing
-
+from PIL import Image, ImageChops
+import collections
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 import matplotlib.pyplot as plt
@@ -44,10 +45,14 @@ def generate_report(data: list[list[str]]) -> None:
             is_first_row = False
         c.showPage()
         c.setFont("Helvetica", 6)
-    create_chart_of_eddited_data(data)
+    edited = create_chart_of_eddited_data(data)
     c.setFont("Helvetica-Bold", 14)
     c.drawString(50, h - 50, "Edited Files Pie chart")
+    c.setFont("Helvetica", 10)
+    c.drawString(50, h - 65, "Edited: " + str(edited) + " Original: " + str(len(data) - edited))
     c.drawImage("temp/editedChart.png", -100, h - 550)
+    create_Years_chart(data)
+    c.drawImage("temp/yearBar.png", 0, 50)
     c.save()
 
 def create_chart_of_eddited_data(data):
@@ -60,6 +65,37 @@ def create_chart_of_eddited_data(data):
     y = np.array([countEdited, len(data) - countEdited])
     plt.pie(y, labels=labels, colors=colors)
     plt.savefig("temp/editedChart.png")
+    getCountryFromCoordinates(data)
+    return countEdited
+
+def create_Years_chart(data):
+    dictt = {}
+    for item in data[1:]:
+        date = item[1]
+        if(date != ""):
+            year = date[:4]
+            if(year in dictt):
+                dictt[year] = dictt[year] + 1
+            else:
+                dictt[year] = 1
+    dictt = dict(sorted(dictt.items()))
+    years = list(dictt.keys())
+    values = list(dictt.values())
+    fig = plt.figure(figsize = (10, 5))
+    plt.bar(years, values, color ='maroon')
+    plt.xlabel("Years")
+    plt.ylabel("No. of images made this year")
+    plt.title("Images made by year")
+    plt.savefig("temp/yearBar.png")
+    image = Image.open('temp/yearBar.png')
+    image.thumbnail((600, 600))
+    image.save('temp/yearBar.png')
+
+def getCountryFromCoordinates(data):
+    for item in data:
+        coords = item[5]
+        if(coords != ""):
+            print(coords)
 
 def grouper(iterable: typing.Iterable[typing.Any], n: int) -> typing.Iterable[typing.Any]:
     args = [iter(iterable)] * n
@@ -89,10 +125,10 @@ def get_row(x: list[typing.Any]) -> typing.Any:
     soft = x[2][0][:15] if len(x[2]) >= 1 else ""
     is_edited_by_soft = x[2][1] if len(x[2]) >= 2 else 0
     coop = x[3][0][:12] if len(x[3]) >= 1 else ""
-    gps = x[4][0][:25] + "..." if len(x[4]) >= 1 else ""
+    gps = x[4][0] if len(x[4]) >= 1 else ""
     source = x[5][0] if len(x[5]) >= 1 else 0
     is_edited = is_edited_by_date or is_edited_by_soft
-    return (filename, dto, dt, soft, coop, gps, bool(source), bool(is_edited))
+    return (filename, dto, dt, soft, coop, gps, bool(source), bool(is_edited),)
 
 
 def prep_data(data: list[typing.Any]) -> list[tuple[typing.Any, ...]]:
