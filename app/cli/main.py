@@ -16,7 +16,8 @@ from app.cli.inspectors import (
 )
 from app.cli.report import generate_report
 from app.cli.utils import (
-    TMP_FOLDER,
+    DOWNLOAD_TMP_FOLDER,
+    clear_downloaded_images,
     download_images,
     filter_images_or_directories_from_paths,
     is_osxmetadata_package_present,
@@ -128,7 +129,8 @@ def scan(
         generate_report(result)
     if url:
         download_images(url)
-        result = scan_path(TMP_FOLDER)
+        result = scan_path(DOWNLOAD_TMP_FOLDER)
+        clear_downloaded_images()
         generate_report(result)
 
 

@@ -1,11 +1,13 @@
+import contextlib
 import itertools
 import os
 import typing
 
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen import canvas
 import matplotlib.pyplot as plt
 import numpy as np
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+
 
 def generate_report(data: list[list[str]]) -> None:
     w, h = A4
@@ -50,16 +52,18 @@ def generate_report(data: list[list[str]]) -> None:
     c.drawImage("temp/editedChart.png", -100, h - 550)
     c.save()
 
-def create_chart_of_eddited_data(data):
-    countEdited = 0
+
+def create_chart_of_eddited_data(data: list[list[typing.Any]]) -> None:
+    count_edited = 0
     labels = ["Edited", "Original"]
     colors = ["Red", "green"]
     for el in data[1::]:
-        if(el[7]):
-            countEdited += 1
-    y = np.array([countEdited, len(data) - countEdited])
+        if el[7]:
+            count_edited += 1
+    y = np.array([count_edited, len(data) - count_edited])
     plt.pie(y, labels=labels, colors=colors)
     plt.savefig("temp/editedChart.png")
+
 
 def grouper(iterable: typing.Iterable[typing.Any], n: int) -> typing.Iterable[typing.Any]:
     args = [iter(iterable)] * n
@@ -83,6 +87,10 @@ def make_flat(data: list[typing.Any], flat_data: list[typing.Any]) -> None:
 
 def get_row(x: list[typing.Any]) -> typing.Any:
     filename = os.path.basename(x[0])
+
+    if len(x) != 6:
+        return (filename, "", "", "", "", "", False, False)
+
     dto = x[1][0].strftime("%Y-%m-%d %H:%M:%S") if len(x[1]) >= 1 else ""
     dt = x[1][1].strftime("%Y-%m-%d %H:%M:%S") if len(x[1]) >= 2 else ""
     is_edited_by_date = x[1][2] if len(x[1]) >= 3 else 0
@@ -100,12 +108,10 @@ def prep_data(data: list[typing.Any]) -> list[tuple[typing.Any, ...]]:
     make_flat(data, flat_data)
     result = []
     result.append(
-        ("FileName", "DateTime Origin", "DateTime", "Software", "Copyright", "Coordinates", "Has Source", "Is Edited")
+        ("FileName", "DateTime Origin", "DateTime", "Software", "Copyright", "Coordinates", "Has Source", "Is Edited"),
     )
     for x in flat_data:
-        try:
+        # todo: handle error
+        with contextlib.suppress(Exception):
             result.append(get_row(x))
-        except Exception as e:
-            # todo handle error
-            pass
     return result
