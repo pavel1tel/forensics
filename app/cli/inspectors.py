@@ -40,9 +40,8 @@ def inspector_wrapper(f: t.Callable[P, R]) -> t.Callable[P, R | None]:
     return inner
 
 
-# result -> {?DateTimeOriginal[Date], ?DateTime[Date], ?isEdited[0 || 1]}
 @inspector_wrapper
-def inspect_datetime_fields(exif: dict[str, t.Any]) -> None:
+def inspect_datetime_fields(exif: dict[str, t.Any]) -> list[datetime.datetime | int]:
     result = []
     # checking datetime original tag
     print_header("Analysing datetime fields")
@@ -60,6 +59,12 @@ def inspect_datetime_fields(exif: dict[str, t.Any]) -> None:
     # comparing datetime original and datetime tags
     img_datetime = datetime.datetime.strptime(exif["DateTime"], datetime_format).astimezone()
     result.append(img_datetime)
+
+    today = datetime.datetime.today()
+
+    if img_datetime > today or img_datetime_original > today:
+        result.append(1)
+        return result
 
     if img_datetime != img_datetime_original:
         delta = img_datetime - img_datetime_original

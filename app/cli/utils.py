@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 
 IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg"]
 TMP_FOLDER = "./tmp"
+DOWNLOAD_TMP_FOLDER = "./download_tmp"
 DOWNLOAD_CHUNK_SIZE = 2**14
 
 
@@ -39,6 +40,11 @@ def print_warning(msg: str) -> None:
     rich.print(f"[yellow]{msg}[/yellow]")
 
 
+def print_warning_and_exit(msg: str) -> None:
+    rich.print(f"\n[yellow]{msg}[/yellow]")
+    raise typer.Exit(code=0)
+
+
 def print_header(msg: str) -> None:
     rich.print(f"\n[green]{_center_in_the_terminal(msg)}[/green]\n")
 
@@ -61,8 +67,9 @@ def filter_images_from_paths(paths: list[str]) -> list[str]:
 
 def filter_images_or_directories_from_paths(parent_path: str, paths: list[str]) -> list[str]:
     return [
-        path for path in paths
-        if any(path.endswith(ext) for ext in IMAGE_EXTENSIONS) or os.path.isdir(f"{parent_path}/{path}")
+        path
+        for path in paths
+        if any(path.lower().endswith(ext) for ext in IMAGE_EXTENSIONS) or os.path.isdir(f"{parent_path}/{path}")
     ]
 
 
@@ -79,7 +86,7 @@ def get_images_from_url(url: str) -> list[str]:  # type: ignore[return]
 
 def download_image(url: str) -> str:
     img_name = url.split("/")[-1]
-    save_path = TMP_FOLDER + "/" + img_name
+    save_path = DOWNLOAD_TMP_FOLDER + "/" + img_name
 
     response = requests.get(url, stream=True)
     if response.status_code != 200:
@@ -94,16 +101,24 @@ def download_image(url: str) -> str:
 
 def download_images(url: str, limit: int = 10) -> list[str]:
     img_urls = get_images_from_url(url)
+    if not img_urls:
+        print_warning_and_exit(f"Can't find suitable images from url {url}")
+
     img_paths = []
 
-    if not os.path.exists(TMP_FOLDER):
-        os.makedirs(TMP_FOLDER)
+    if not os.path.exists(DOWNLOAD_TMP_FOLDER):
+        os.makedirs(DOWNLOAD_TMP_FOLDER)
 
     for img_url in img_urls[:limit]:
         img_path = download_image(img_url)
         img_paths.append(img_path)
 
     return img_paths
+
+
+def clear_downloaded_images() -> None:
+    if os.path.exists(DOWNLOAD_TMP_FOLDER):
+        shutil.rmtree(DOWNLOAD_TMP_FOLDER)
 
 
 if __name__ == "__main__":

@@ -87,6 +87,7 @@ ignore = [
     "T201",   # allow print
     "N813",   # camel case imports
     "F401",
+    "DTZ002",
 ]
 
 
