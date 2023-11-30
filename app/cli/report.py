@@ -6,10 +6,10 @@ import typing
 
 import matplotlib.pyplot as plt
 import numpy as np
+from geopy.geocoders import Nominatim
 from PIL import Image, ImageChops
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
-from geopy.geocoders import Nominatim
 
 
 def generate_report(data: list[list[str]]) -> None:
@@ -90,18 +90,17 @@ def create_Years_chart(data):
     years = list(dictt.keys())
     values = list(dictt.values())
     fig = plt.figure(figsize = (10, 5))
-    plt.bar(years, values, color ='maroon')
+    plt.bar(years, values, color ="maroon")
     plt.xlabel("Years")
     plt.ylabel("No. of images made this year")
     plt.title("Images made by year")
     plt.savefig("temp/yearBar.png")
-    image = Image.open('temp/yearBar.png')
+    image = Image.open("temp/yearBar.png")
     image.thumbnail((600, 600))
-    image.save('temp/yearBar.png')
+    image.save("temp/yearBar.png")
 
 def buildCountryChart(data):
     countries = getCountryFromCoordinates(data)
-    print(countries)
     dictt = {}
     for contry in countries:
         if(contry in dictt):
@@ -111,36 +110,36 @@ def buildCountryChart(data):
     fig = plt.figure(figsize = (10, 5))
     contrs = list(dictt.keys())
     values = list(dictt.values())
-    plt.bar(contrs, values, color ='maroon')
+    plt.bar(contrs, values, color ="maroon")
     plt.xlabel("Countries")
     plt.ylabel("No. of images made made in this country")
     plt.title("Images made in countries")
     plt.savefig("temp/countryBar.png")
-    image = Image.open('temp/countryBar.png')
+    image = Image.open("temp/countryBar.png")
     image.thumbnail((600, 600))
-    image.save('temp/countryBar.png')
+    image.save("temp/countryBar.png")
 
 def getCountryFromCoordinates(data):
     result = []
     for item in data[1:]:
         coordinates = item[5]
         if(coordinates != ""):
-            latitude_str, longitude_str = coordinates.split(' ')[1:4:2]
-            NS, WE = coordinates.split(' ')[0:3:2]
+            latitude_str, longitude_str = coordinates.split(" ")[1:4:2]
+            NS, WE = coordinates.split(" ")[0:3:2]
             latitude = float(latitude_str.split("°")[0])
             longitude = float(longitude_str.split("°")[0])
             latitude += float(latitude_str.split("°")[0].split("\'")[0]) / 60
             longitude += float(longitude_str.split("°")[0].split("\'")[0]) / 60
-            latitude += float(latitude_str.split("°")[0].split("\'")[0].split("\"")[0]) / 3600
-            latitude += float(longitude_str.split("°")[0].split("\'")[0].split("\"")[0]) / 3600
+            latitude += float(latitude_str.split("°")[0].split("\'")[0].split('"')[0]) / 3600
+            latitude += float(longitude_str.split("°")[0].split("\'")[0].split('"')[0]) / 3600
             if(NS[0] == "S"):
                 latitude = latitude * -1
             if(WE[0] == "W"):
                 longitude = longitude * -1
             geolocator = Nominatim(user_agent="geo_locator")
-            location = geolocator.reverse((latitude, longitude), language='en')
+            location = geolocator.reverse((latitude, longitude), language="en")
             if(location != None):
-                country = location.raw['address']['country']
+                country = location.raw["address"]["country"]
                 result.append(country)
     return result
 
@@ -171,7 +170,6 @@ def get_row(x: list[typing.Any]) -> typing.Any:
 
     if len(x) != 6:
         return (filename, "", "", "", "", "", False, False)
-
     dto = x[1][0].strftime("%Y-%m-%d %H:%M:%S") if len(x[1]) >= 1 else ""
     dt = x[1][1].strftime("%Y-%m-%d %H:%M:%S") if len(x[1]) >= 2 else ""
     is_edited_by_date = x[1][2] if len(x[1]) >= 3 else 0
@@ -181,7 +179,7 @@ def get_row(x: list[typing.Any]) -> typing.Any:
     gps = x[4][0] if len(x[4]) >= 1 else ""
     source = x[5][0] if len(x[5]) >= 1 else 0
     is_edited = is_edited_by_date or is_edited_by_soft
-    return (filename, dto, dt, soft, coop, gps, bool(source), bool(is_edited),)
+    return (filename, dto, dt, soft, coop, gps, bool(source), bool(is_edited))
 
 
 def prep_data(data: list[typing.Any]) -> list[tuple[typing.Any, ...]]:

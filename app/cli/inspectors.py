@@ -30,7 +30,7 @@ def inspector_wrapper(f: t.Callable[P, R]) -> t.Callable[P, R | None]:
     def inner(*args: P.args, **kwargs: P.kwargs) -> R | None:
         try:
             return f(*args, **kwargs)
-        except Exception:
+        except Exception as e:
             return []
 
     return inner
@@ -54,9 +54,10 @@ def inspect_datetime_fields(exif: dict[str, t.Any]) -> list[datetime.datetime | 
     img_datetime = datetime.datetime.strptime(exif["DateTime"], datetime_format).astimezone()
     result.append(img_datetime)
 
-    today = datetime.datetime.today()
+    today = datetime.datetime.today().astimezone(tz=None)
 
     if img_datetime > today or img_datetime_original > today:
+        
         result.append(1)
         return result
 
@@ -73,6 +74,7 @@ def inspect_editing_software(exif: dict[str, t.Any]) -> list[str]:
     for part in EDITING_SOFTWARE_TAG_PARTS:
         if part.lower() in exif["Software"].lower():
             result.append(exif["Software"])
+            result.append(1)
             return result
     return []
 
