@@ -9,6 +9,7 @@ import numpy as np
 from PIL import Image, ImageChops
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
+from geopy.geocoders import Nominatim
 
 
 def generate_report(data: list[list[str]]) -> None:
@@ -56,6 +57,9 @@ def generate_report(data: list[list[str]]) -> None:
     c.drawImage("temp/editedChart.png", -100, h - 550)
     create_Years_chart(data)
     c.drawImage("temp/yearBar.png", 0, 50)
+    c.showPage()
+    buildCountryChart(data)
+    c.drawImage("temp/countryBar.png", 0, h - 300)
     c.save()
 
 
@@ -95,11 +99,51 @@ def create_Years_chart(data):
     image.thumbnail((600, 600))
     image.save('temp/yearBar.png')
 
+def buildCountryChart(data):
+    countries = getCountryFromCoordinates(data)
+    print(countries)
+    dictt = {}
+    for contry in countries:
+        if(contry in dictt):
+            dictt[contry] = dictt[contry] + 1
+        else:
+            dictt[contry] = 1
+    fig = plt.figure(figsize = (10, 5))
+    contrs = list(dictt.keys())
+    values = list(dictt.values())
+    plt.bar(contrs, values, color ='maroon')
+    plt.xlabel("Countries")
+    plt.ylabel("No. of images made made in this country")
+    plt.title("Images made in countries")
+    plt.savefig("temp/countryBar.png")
+    image = Image.open('temp/countryBar.png')
+    image.thumbnail((600, 600))
+    image.save('temp/countryBar.png')
+
 def getCountryFromCoordinates(data):
-    for item in data:
-        coords = item[5]
-        if(coords != ""):
-            print(coords)
+    result = []
+    for item in data[1:]:
+        coordinates = item[5]
+        if(coordinates != ""):
+            latitude_str, longitude_str = coordinates.split(' ')[1:4:2]
+            NS, WE = coordinates.split(' ')[0:3:2]
+            latitude = float(latitude_str.split("°")[0])
+            longitude = float(longitude_str.split("°")[0])
+            latitude += float(latitude_str.split("°")[0].split("\'")[0]) / 60
+            longitude += float(longitude_str.split("°")[0].split("\'")[0]) / 60
+            latitude += float(latitude_str.split("°")[0].split("\'")[0].split("\"")[0]) / 3600
+            latitude += float(longitude_str.split("°")[0].split("\'")[0].split("\"")[0]) / 3600
+            if(NS[0] == "S"):
+                latitude = latitude * -1
+            if(WE[0] == "W"):
+                longitude = longitude * -1
+            geolocator = Nominatim(user_agent="geo_locator")
+            location = geolocator.reverse((latitude, longitude), language='en')
+            if(location != None):
+                country = location.raw['address']['country']
+                result.append(country)
+    return result
+
 
 
 def grouper(iterable: typing.Iterable[typing.Any], n: int) -> typing.Iterable[typing.Any]:
