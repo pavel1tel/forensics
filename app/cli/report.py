@@ -50,21 +50,46 @@ def grouper(iterable: typing.Iterable[typing.Any], n: int) -> typing.Iterable[ty
     return itertools.zip_longest(*args)
 
 
-def prep_data(data: list[list[typing.Any]]) -> list[tuple[typing.Any, ...]]:
+def make_flat(data: list[typing.Any], flat_data: list[typing.Any]) -> None:
+    for item in data:
+        if not len(item):
+            continue
+
+        if isinstance(item[0], str):
+            flat_data.append(item)
+            continue
+
+        if isinstance(item[0], list):
+            make_flat(item, flat_data)
+            continue
+    return
+
+
+def get_row(x: list[typing.Any]) -> typing.Any:
+    filename = os.path.basename(x[0])
+    dto = x[1][0].strftime("%Y-%m-%d %H:%M:%S") if len(x[1]) >= 1 else ""
+    dt = x[1][1].strftime("%Y-%m-%d %H:%M:%S") if len(x[1]) >= 2 else ""
+    is_edited_by_date = x[1][2] if len(x[1]) >= 3 else 0
+    soft = x[2][0] if len(x[2]) >= 1 else ""
+    is_edited_by_soft = x[2][1] if len(x[2]) >= 2 else 0
+    coop = x[3][0][:23] if len(x[3]) >= 1 else ""
+    gps = x[4][0] if len(x[4]) >= 1 else ""
+    source = x[5][0] if len(x[5]) >= 1 else 0
+    is_edited = is_edited_by_date or is_edited_by_soft
+    return (filename, dto, dt, soft, coop, gps, bool(source), bool(is_edited))
+
+
+def prep_data(data: list[typing.Any]) -> list[tuple[typing.Any, ...]]:
+    flat_data = []
+    make_flat(data, flat_data)
     result = []
     result.append(
         ("FileName", "DateTime Origin", "DateTime", "Software", "Copyright", "Coordinates", "Has Source", "Is Edited")
     )
-    for x in data:
-        filename = os.path.basename(x[0][0])
-        dto = x[0][1][0].strftime("%Y-%m-%d %H:%M:%S") if len(x[0][1]) >= 1 else ""
-        dt = x[0][1][1].strftime("%Y-%m-%d %H:%M:%S") if len(x[0][1]) >= 2 else ""
-        is_edited_by_date = x[0][1][2] if len(x[0][1]) >= 3 else 0
-        soft = x[0][2][0] if len(x[0][2]) >= 1 else ""
-        is_edited_by_soft = x[0][2][1] if len(x[0][2]) >= 2 else 0
-        coop = x[0][3][0][:23] if len(x[0][3]) >= 1 else ""
-        gps = x[0][4][0] if len(x[0][4]) >= 1 else ""
-        source = x[0][5][0] if len(x[0][5]) >= 1 else 0
-        is_edited = is_edited_by_date or is_edited_by_soft
-        result.append((filename, dto, dt, soft, coop, gps, bool(source), bool(is_edited)))
+    for x in flat_data:
+        try:
+            result.append(get_row(x))
+        except Exception as e:
+            # todo handle error
+            pass
     return result
