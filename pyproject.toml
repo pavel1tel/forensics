@@ -18,6 +18,8 @@ typer = {extras = ["all"], version = "^0.9.0"}
 requests = "^2.31.0"
 bs4 = "^0.0.1"
 torch = "^2.1.1"
+fpdf = "^1.7.2"
+reportlab = "^4.0.7"
 
 
 [tool.poetry.group.dev.dependencies]

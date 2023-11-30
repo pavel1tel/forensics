@@ -6,3 +6,4 @@ app/out/*
 .ruff_cache/
 __pycache__/
 venv
+*.pdf

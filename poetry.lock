@@ -225,6 +225,16 @@ testing = ["covdefaults (>=2.3)", "coverage (>=7.3.2)", "diff-cover (>=8)", "pyt
 typing = ["typing-extensions (>=4.8)"]
 
 [[package]]
+name = "fpdf"
+version = "1.7.2"
+description = "Simple PDF generation for Python"
+optional = false
+python-versions = "*"
+files = [
+    {file = "fpdf-1.7.2.tar.gz", hash = "sha256:125840783289e7d12552b1e86ab692c37322e7a65b96a99e0ea86cca041b6779"},
+]
+
+[[package]]
 name = "fsspec"
 version = "2023.10.0"
 description = "File-system specification"
@@ -802,6 +812,25 @@ files = [
 plugins = ["importlib-metadata"]
 
 [[package]]
+name = "reportlab"
+version = "4.0.7"
+description = "The Reportlab Toolkit"
+optional = false
+python-versions = ">=3.7,<4"
+files = [
+    {file = "reportlab-4.0.7-py3-none-any.whl", hash = "sha256:956d5874ee56e88753cf4c49452d6a7fa54a64e049a0382bd0c0b2013a26ef9a"},
+    {file = "reportlab-4.0.7.tar.gz", hash = "sha256:967c77f00efd918cc231cf8b6d8f4e477dc973b5c16557e3bd18dfaeb5a70234"},
+]
+
+[package.dependencies]
+pillow = ">=9.0.0"
+
+[package.extras]
+accel = ["rl-accel (>=0.9.0,<1.1)"]
+pycairo = ["freetype-py (>=2.3.0,<2.4)", "rlPyCairo (>=0.2.0,<1)"]
+renderpm = ["rl-renderPM (>=4.0.3,<4.1)"]
+
+[[package]]
 name = "requests"
 version = "2.31.0"
 description = "Python HTTP for Humans."
@@ -1063,4 +1092,4 @@ macos = []
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<=3.12"
-content-hash = "6d4cf99b8b547f7bcf2e81352d468ffafabe5cd57eacad9ccd396a12ee28fe53"
+content-hash = "0000fca928439c91eb2f33620fd1a3b489dfc10a215a928558327f49e11d1d31"

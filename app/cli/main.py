@@ -5,7 +5,7 @@ from pathlib import Path
 import rich
 import typer
 from PIL import ExifTags, Image
-
+from app.cli.report import generateReport
 from app.cli.ela_nn.ela import check_ela
 from app.cli.inspectors import (
     inspect_copyright,
@@ -54,31 +54,36 @@ def clean() -> None:
 
 def scan_image(path: PathAnnotation | str) -> None:
     print_header(f"Started scanning image {path}")
-
+    result = []
+    result.append(path)
     img = Image.open(path)
     if raw_exif := img._getexif():
         exif = {ExifTags.TAGS[k]: v for k, v in raw_exif.items() if k in ExifTags.TAGS}
-        inspect_datetime_fields(exif)
-        inspect_editing_software(exif)
-        inspect_copyright(exif)
-        inspect_gps(exif)
+        result.append(inspect_datetime_fields(exif))
+        result.append(inspect_editing_software(exif))
+        result.append(inspect_copyright(exif))
+        result.append(inspect_gps(exif))
     else:
         rich.print("No exif metadata fields found!\n")
 
-    inspect_osx_metadata(path)
+    result.append(inspect_osx_metadata(path))
     print_header(f"Finished scanning image {path}")
+    return result
 
 
 def scan_path(path: PathAnnotation | str) -> None:
+    result = []
     if os.path.isdir(path):
         print_header(f"Scanning directory {path}")
 
         paths = os.listdir(path)
         img_paths = filter_images_from_paths(paths)
         for img_path in img_paths:
-            scan_image(f"{path}/{img_path}")
+            result.append(scan_image(f"{path}/{img_path}"))
+        return result
     else:
-        scan_image(path)
+        result.append(scan_image(path))
+        return result
 
 
 @app.command(
@@ -117,11 +122,13 @@ def scan(
     if path:
         if not os.path.exists(path):
             print_error_and_exit("file or directory does not exist under the specified path!")
-        scan_path(path)
-
+        result = scan_path(path)
+        generateReport(result)
     if url:
         download_images(url)
-        scan_path(TMP_FOLDER)
+        result = scan_path(TMP_FOLDER)
+        generateReport(result)
+
 
 
 if __name__ == "__main__":
