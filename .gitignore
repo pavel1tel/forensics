@@ -7,3 +7,4 @@ app/out/*
 __pycache__/
 venv
 *.pdf
+temp/*

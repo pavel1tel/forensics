@@ -4,7 +4,8 @@ import typing
 
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
-
+import matplotlib.pyplot as plt
+import numpy as np
 
 def generate_report(data: list[list[str]]) -> None:
     w, h = A4
@@ -17,7 +18,7 @@ def generate_report(data: list[list[str]]) -> None:
     c.setFont("Helvetica-Bold", 14)
     c.drawString(50, h - 50, "All Files Report Table")
     c.setFont("Helvetica", 6)
-    xlist = [x + x_offset for x in [0, 100, 160, 220, 280, 340, 400, 460, 520]]
+    xlist = [x + x_offset for x in [0, 100, 160, 220, 280, 340, 420, 470, 520]]
     ylist = [h - y_offset - i * padding for i in range(max_rows_per_page + 1)]
     is_first_row = True
     for rows in grouper(data, max_rows_per_page):
@@ -30,7 +31,7 @@ def generate_report(data: list[list[str]]) -> None:
                     c.drawString(x + 2, y - padding + 3, str(cell))
                     c.setFont("Helvetica", 6)
                     continue
-                if x == 510 and not is_first_row:
+                if x == 520 and not is_first_row:
                     if cell:
                         c.setFillColorRGB(255, 0, 0)
                         c.drawString(x + 2, y - padding + 3, str(cell))
@@ -42,8 +43,23 @@ def generate_report(data: list[list[str]]) -> None:
                 c.drawString(x + 2, y - padding + 3, str(cell))
             is_first_row = False
         c.showPage()
+        c.setFont("Helvetica", 6)
+    create_chart_of_eddited_data(data)
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(50, h - 50, "Edited Files Pie chart")
+    c.drawImage("temp/editedChart.png", -100, h - 550)
     c.save()
 
+def create_chart_of_eddited_data(data):
+    countEdited = 0
+    labels = ["Edited", "Original"]
+    colors = ["Red", "green"]
+    for el in data[1::]:
+        if(el[7]):
+            countEdited += 1
+    y = np.array([countEdited, len(data) - countEdited])
+    plt.pie(y, labels=labels, colors=colors)
+    plt.savefig("temp/editedChart.png")
 
 def grouper(iterable: typing.Iterable[typing.Any], n: int) -> typing.Iterable[typing.Any]:
     args = [iter(iterable)] * n
@@ -70,10 +86,10 @@ def get_row(x: list[typing.Any]) -> typing.Any:
     dto = x[1][0].strftime("%Y-%m-%d %H:%M:%S") if len(x[1]) >= 1 else ""
     dt = x[1][1].strftime("%Y-%m-%d %H:%M:%S") if len(x[1]) >= 2 else ""
     is_edited_by_date = x[1][2] if len(x[1]) >= 3 else 0
-    soft = x[2][0] if len(x[2]) >= 1 else ""
+    soft = x[2][0][:15] if len(x[2]) >= 1 else ""
     is_edited_by_soft = x[2][1] if len(x[2]) >= 2 else 0
-    coop = x[3][0][:23] if len(x[3]) >= 1 else ""
-    gps = x[4][0] if len(x[4]) >= 1 else ""
+    coop = x[3][0][:12] if len(x[3]) >= 1 else ""
+    gps = x[4][0][:25] + "..." if len(x[4]) >= 1 else ""
     source = x[5][0] if len(x[5]) >= 1 else 0
     is_edited = is_edited_by_date or is_edited_by_soft
     return (filename, dto, dt, soft, coop, gps, bool(source), bool(is_edited))
