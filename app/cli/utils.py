@@ -46,7 +46,7 @@ def print_warning_and_exit(msg: str) -> None:
 
 
 def print_header(msg: str) -> None:
-    rich.print(f"\n[green]{_center_in_the_terminal(msg)}[/green]\n")
+    rich.print(f"\n[green]{msg}[/green]\n")
 
 
 def print_sub_header(msg: str) -> None:
