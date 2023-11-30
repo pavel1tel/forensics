@@ -6,7 +6,7 @@ import rich
 import typer
 from PIL import ExifTags, Image
 
-from app.cli.ela import generate_ela
+from app.cli.ela_nn.ela import check_ela
 from app.cli.inspectors import (
     inspect_copyright,
     inspect_datetime_fields,
@@ -88,7 +88,7 @@ def ela(path: PathAnnotation) -> None:
     if not os.path.exists(path):
         print_error_and_exit("file does not exist under the specified path!")
 
-    generate_ela(str(path))
+    check_ela(str(path))
 
     print_success("ELA images were successfully generated!")
 
