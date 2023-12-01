@@ -118,6 +118,9 @@ def scan(
     if is_osxmetadata_package_present():
         print_list_item("osxmetadata fields")
 
+    if not os.path.exists("temp/"):
+        os.makedirs("temp/")
+
     if path:
         if not os.path.exists(path):
             print_error_and_exit("file or directory does not exist under the specified path!")

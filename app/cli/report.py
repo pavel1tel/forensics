@@ -82,9 +82,6 @@ def create_chart_of_eddited_data(data: list[list[typing.Any]]) -> int:
     y = np.array([count_edited, len(data) - count_edited])
     plt.pie(y, labels=labels, colors=colors)
 
-    if not os.path.exists("temp/"):
-        os.makedirs("temp/")
-
     plt.savefig("temp/editedChart.png")
     return count_edited
 
@@ -143,8 +140,6 @@ def get_reverse_coordinates(lat: float, lng: float) -> dict[str, typing.Any] | N
     if response.status_code != 200:
         return None
     return response.json()
-
-
 
 
 def getCountryFromCoordinates(data):
