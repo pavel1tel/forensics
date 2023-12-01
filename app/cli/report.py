@@ -81,6 +81,10 @@ def create_chart_of_eddited_data(data: list[list[typing.Any]]) -> int:
             count_edited += 1
     y = np.array([count_edited, len(data) - count_edited])
     plt.pie(y, labels=labels, colors=colors)
+
+    if not os.path.exists("temp/"):
+        os.makedirs("temp/")
+
     plt.savefig("temp/editedChart.png")
     return count_edited
 
