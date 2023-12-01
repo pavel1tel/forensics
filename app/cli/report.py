@@ -45,7 +45,7 @@ def generate_report(data: list[list[str]]) -> None:
                         c.drawString(x + 2, y - padding + 3, str(cell))
                     c.setFillColorRGB(0, 0, 0)
                     continue
-                c.drawString(x + 2, y - padding + 3, str(cell))
+                c.drawString(x + 2, y - padding + 3, truncate_string(str(cell)))
             is_first_row = False
         c.showPage()
         c.setFont("Helvetica", 6)
@@ -62,6 +62,12 @@ def generate_report(data: list[list[str]]) -> None:
     c.drawImage("temp/countryBar.png", 0, h - 300)
     c.save()
 
+def truncate_string(input_string):
+    if len(input_string) > 20:
+        truncated_string = input_string[:6] + "..." + input_string[-6:]
+    else:
+        truncated_string = input_string
+    return truncated_string
 
 def create_chart_of_eddited_data(data: list[list[typing.Any]]) -> None:
     count_edited = 0
@@ -173,9 +179,9 @@ def get_row(x: list[typing.Any]) -> typing.Any:
     dto = x[1][0].strftime("%Y-%m-%d %H:%M:%S") if len(x[1]) >= 1 else ""
     dt = x[1][1].strftime("%Y-%m-%d %H:%M:%S") if len(x[1]) >= 2 else ""
     is_edited_by_date = x[1][2] if len(x[1]) >= 3 else 0
-    soft = x[2][0][:15] if len(x[2]) >= 1 else ""
+    soft = x[2][0] if len(x[2]) >= 1 else ""
     is_edited_by_soft = x[2][1] if len(x[2]) >= 2 else 0
-    coop = x[3][0][:12] if len(x[3]) >= 1 else ""
+    coop = x[3][0] if len(x[3]) >= 1 else ""
     gps = x[4][0] if len(x[4]) >= 1 else ""
     source = x[5][0] if len(x[5]) >= 1 else 0
     is_edited = is_edited_by_date or is_edited_by_soft
