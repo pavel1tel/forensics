@@ -8,10 +8,12 @@ def setup() -> None:
         main_executable_path = bin_dir + "/image_scan"
         with open(main_executable_path) as f:
             lines = f.readlines()
-        lines[3] = "from app.cli.ela_nn.model import IMDModel\n"
+
+        new_lines = ["from app.cli.ela_nn.model import IMDModel\n"]
+        new_lines.extend(lines)
 
         with open(main_executable_path, "w") as f:
-            f.writelines(lines)
+            f.writelines(new_lines)
     except Exception:
         print("Error when setting up the `image_scan` script, `ela` subcommand will not work")
     else:
