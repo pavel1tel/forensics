@@ -2,6 +2,7 @@ import os
 
 import numpy as np
 import PIL.Image
+import rich
 import torch
 from PIL import Image, ImageChops
 
@@ -20,7 +21,7 @@ def infer(img_path: str, model: IMDModel, device: torch.device) -> None:
     y_pred = torch.max(out, dim=1)[1]
 
     print("Prediction:", end=" ")
-    print("Authentic" if y_pred else "Tampered")  # auth -> 1 and tp -> 0
+    rich.print("[green]Authentic[/green]" if y_pred else "[red]Tampered[/red]")
 
 
 def ela(img_path: str) -> None:
@@ -44,8 +45,6 @@ def ela(img_path: str) -> None:
 
 def check_ela(path: str) -> None:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print("Working on", device)
-
     model_path = "model/model_c1.pth"
     model = torch.load(model_path, map_location=torch.device("cpu"))
     infer(model=model, img_path=path, device=device)

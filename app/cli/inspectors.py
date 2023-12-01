@@ -30,7 +30,7 @@ def inspector_wrapper(f: t.Callable[P, R]) -> t.Callable[P, R | None]:
     def inner(*args: P.args, **kwargs: P.kwargs) -> R | None:
         try:
             return f(*args, **kwargs)
-        except Exception as e:
+        except Exception:
             return []
 
     return inner
@@ -57,7 +57,7 @@ def inspect_datetime_fields(exif: dict[str, t.Any]) -> list[datetime.datetime | 
     today = datetime.datetime.today().astimezone(tz=None)
 
     if img_datetime > today or img_datetime_original > today:
-        
+
         result.append(1)
         return result
 
@@ -99,7 +99,7 @@ def inspect_gps(exif: dict[str, t.Any]) -> list[str]:
     result = []
     if gps := exif.get("GPSInfo"):
         gps_parts = [v for _, v in gps.items()][:4]
-        result.append(f"{gps_parts[0]}: {_format_coord(gps_parts[1])} {gps_parts[2]}: {_format_coord(gps_parts[3])} ")
+        result.append(f"{gps_parts[0]}: {_format_coord(gps_parts[1])}\n {gps_parts[2]}: {_format_coord(gps_parts[3])} ")
         return result
     else:
         return result

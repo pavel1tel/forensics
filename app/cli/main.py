@@ -1,8 +1,8 @@
 import os
 import typing as t
+import warnings
 from pathlib import Path
 
-import rich
 import typer
 from PIL import ExifTags, Image
 
@@ -27,6 +27,8 @@ from app.cli.utils import (
     print_sub_header,
     print_success,
 )
+
+warnings.filterwarnings("ignore")
 
 app = typer.Typer()
 
@@ -92,8 +94,6 @@ def ela(path: PathAnnotation) -> None:
 
     check_ela(str(path))
 
-    print_success("ELA images were successfully generated!")
-
 
 @app.command(
     help="Run the metadata fields analysis scan",
@@ -113,6 +113,8 @@ def scan(
     print_list_item("exif datetime fields")
     print_list_item("exif editing software fields")
     print_list_item("exif copyright field")
+    print_list_item("GPS fields\n")
+
     if is_osxmetadata_package_present():
         print_list_item("osxmetadata fields")
 

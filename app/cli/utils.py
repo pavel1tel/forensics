@@ -7,11 +7,14 @@ import requests
 import rich
 import typer
 from bs4 import BeautifulSoup
+from rich.progress import track
 
 IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg"]
 TMP_FOLDER = "./tmp"
 DOWNLOAD_TMP_FOLDER = "./download_tmp"
 DOWNLOAD_CHUNK_SIZE = 2**14
+USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 " \
+             "(KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
 
 
 def is_osxmetadata_package_present() -> bool:
@@ -74,7 +77,7 @@ def filter_images_or_directories_from_paths(parent_path: str, paths: list[str]) 
 
 
 def get_images_from_url(url: str) -> list[str]:  # type: ignore[return]
-    response = requests.get(url)
+    response = requests.get(url, headers={"User-Agent": USER_AGENT})
     if response.status_code == 200:
         soup = BeautifulSoup(response.content, "html.parser")
         img_tags = soup.find_all("img")
@@ -88,7 +91,7 @@ def download_image(url: str) -> str:
     img_name = url.split("/")[-1]
     save_path = DOWNLOAD_TMP_FOLDER + "/" + img_name
 
-    response = requests.get(url, stream=True)
+    response = requests.get(url, stream=True, headers={"User-Agent": USER_AGENT})
     if response.status_code != 200:
         print_warning(f"Failed to download image. Status code: {response.status_code}")
 
@@ -108,8 +111,7 @@ def download_images(url: str, limit: int = 10) -> list[str]:
 
     if not os.path.exists(DOWNLOAD_TMP_FOLDER):
         os.makedirs(DOWNLOAD_TMP_FOLDER)
-
-    for img_url in img_urls[:limit]:
+    for img_url in track(img_urls[:limit], description="Downloading images ..."):
         img_path = download_image(img_url)
         img_paths.append(img_path)
 

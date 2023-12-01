@@ -1,15 +1,16 @@
-import collections
 import contextlib
 import itertools
 import os
+import time
 import typing
 
 import matplotlib.pyplot as plt
 import numpy as np
-from geopy.geocoders import Nominatim
-from PIL import Image, ImageChops
+import requests
+from PIL import Image
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
+from rich.progress import track
 
 
 def generate_report(data: list[list[str]]) -> None:
@@ -26,7 +27,7 @@ def generate_report(data: list[list[str]]) -> None:
     xlist = [x + x_offset for x in [0, 100, 160, 220, 280, 340, 420, 470, 520]]
     ylist = [h - y_offset - i * padding for i in range(max_rows_per_page + 1)]
     is_first_row = True
-    for rows in grouper(data, max_rows_per_page):
+    for rows in track(grouper(data, max_rows_per_page), description="Preparing report data ..."):
         rows = tuple(filter(bool, rows))
         c.grid(xlist, ylist[: len(rows) + 1])
         for y, row in zip(ylist[:-1], rows):
@@ -49,27 +50,29 @@ def generate_report(data: list[list[str]]) -> None:
             is_first_row = False
         c.showPage()
         c.setFont("Helvetica", 6)
+        time.sleep(0.5)
     edited = create_chart_of_eddited_data(data)
     c.setFont("Helvetica-Bold", 14)
     c.drawString(50, h - 50, "Edited Files Pie chart")
     c.setFont("Helvetica", 10)
     c.drawString(50, h - 65, "Edited: " + str(edited) + " Original: " + str(len(data) - edited))
     c.drawImage("temp/editedChart.png", -100, h - 550)
-    create_Years_chart(data)
+    create_years_chart(data)
     c.drawImage("temp/yearBar.png", 0, 50)
     c.showPage()
-    buildCountryChart(data)
+    build_country_chart(data)
     c.drawImage("temp/countryBar.png", 0, h - 300)
     c.save()
 
-def truncate_string(input_string):
-    if len(input_string) > 20:
-        truncated_string = input_string[:6] + "..." + input_string[-6:]
-    else:
-        truncated_string = input_string
-    return truncated_string
 
-def create_chart_of_eddited_data(data: list[list[typing.Any]]) -> None:
+def truncate_string(input_string: str) -> str:
+    if len(input_string) > 20:
+        return input_string[:15] + "..." + input_string[-6:]
+    else:
+        return input_string
+
+
+def create_chart_of_eddited_data(data: list[list[typing.Any]]) -> int:
     count_edited = 0
     labels = ["Edited", "Original"]
     colors = ["Red", "green"]
@@ -79,10 +82,10 @@ def create_chart_of_eddited_data(data: list[list[typing.Any]]) -> None:
     y = np.array([count_edited, len(data) - count_edited])
     plt.pie(y, labels=labels, colors=colors)
     plt.savefig("temp/editedChart.png")
-    getCountryFromCoordinates(data)
     return count_edited
 
-def create_Years_chart(data):
+
+def create_years_chart(data) -> None:
     dictt = {}
     for item in data[1:]:
         date = item[1]
@@ -105,7 +108,8 @@ def create_Years_chart(data):
     image.thumbnail((600, 600))
     image.save("temp/yearBar.png")
 
-def buildCountryChart(data):
+
+def build_country_chart(data):
     countries = getCountryFromCoordinates(data)
     dictt = {}
     for contry in countries:
@@ -125,9 +129,23 @@ def buildCountryChart(data):
     image.thumbnail((600, 600))
     image.save("temp/countryBar.png")
 
+
+def get_reverse_coordinates(lat: float, lng: float) -> dict[str, typing.Any] | None:
+    time.sleep(2)
+    url = f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lng}" \
+          f"&format=json&accept-language=en&addressdetails=1"
+
+    response = requests.get(url, headers={"User-Agent": "cli-application"})
+    if response.status_code != 200:
+        return None
+    return response.json()
+
+
+
+
 def getCountryFromCoordinates(data):
     result = []
-    for item in data[1:]:
+    for item in track(data[1:], description="Processing GPS data ..."):
         coordinates = item[5]
         if(coordinates != ""):
             latitude_str, longitude_str = coordinates.split(" ")[1:4:2]
@@ -142,13 +160,11 @@ def getCountryFromCoordinates(data):
                 latitude = latitude * -1
             if(WE[0] == "W"):
                 longitude = longitude * -1
-            geolocator = Nominatim(user_agent="geo_locator")
-            location = geolocator.reverse((latitude, longitude), language="en")
-            if(location != None):
-                country = location.raw["address"]["country"]
+            location = get_reverse_coordinates(latitude, longitude)
+            if location:
+                country = location["address"]["country"]
                 result.append(country)
     return result
-
 
 
 def grouper(iterable: typing.Iterable[typing.Any], n: int) -> typing.Iterable[typing.Any]:
