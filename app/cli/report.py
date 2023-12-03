@@ -22,7 +22,7 @@ def generate_report(data: list[list[str]]) -> None:
     data = prep_data(data)
     c = canvas.Canvas("report.pdf", pagesize=A4)
     c.setFont("Helvetica-Bold", 14)
-    c.drawString(50, h - 50, "All Files Report Table")
+    c.drawString(50, h - 50, "Report Table")
     c.setFont("Helvetica", 6)
     xlist = [x + x_offset for x in [0, 100, 160, 220, 280, 340, 420, 470, 520]]
     ylist = [h - y_offset - i * padding for i in range(max_rows_per_page + 1)]

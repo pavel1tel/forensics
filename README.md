@@ -54,6 +54,14 @@ $ git clone https://github.com/pavel1tel/forensics
 $ poetry install
 ```
 
+
+### 4. Run setup script 
+
+```shell
+$ image_scan_setup
+```
+
+
 ## Running example scans
 
 ```shell

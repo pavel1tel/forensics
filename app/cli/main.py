@@ -86,7 +86,7 @@ def scan_path(path: PathAnnotation | str) -> list[list[str]]:
 
 
 @app.command(
-    help="Run the Error Level Analysis (ELA) scan",
+    help="Run the ELA (Error Level Analysis) scan",
 )
 def ela(path: PathAnnotation) -> None:
     if not os.path.exists(path):
