@@ -6,7 +6,8 @@ import rich
 import torch
 from PIL import Image, ImageChops
 
-from app.cli.ela_nn.model import IMDModel
+from app.ela_nn.model import IMDModel
+from app.utils import get_base_path
 
 
 def infer(img_path: str, model: IMDModel, device: torch.device) -> None:
@@ -45,6 +46,6 @@ def ela(img_path: str) -> None:
 
 def check_ela(path: str) -> None:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model_path = "model/model_c1.pth"
+    model_path = f"{get_base_path()}/model/model_c1.pth"
     model = torch.load(model_path, map_location=torch.device("cpu"))
     infer(model=model, img_path=path, device=device)

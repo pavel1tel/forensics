@@ -1,6 +1,7 @@
 import os
 import platform
 import shutil
+import sys
 from urllib.parse import urljoin
 
 import requests
@@ -118,9 +119,17 @@ def download_images(url: str, limit: int = 10) -> list[str]:
     return img_paths
 
 
-def clear_downloaded_images() -> None:
-    if os.path.exists(DOWNLOAD_TMP_FOLDER):
-        shutil.rmtree(DOWNLOAD_TMP_FOLDER)
+def clean_temp_folders() -> None:
+    for path in [TMP_FOLDER, DOWNLOAD_TMP_FOLDER]:
+        if os.path.exists(path):
+            shutil.rmtree(path)
+
+
+def get_base_path() -> str:
+    if getattr(sys, 'frozen', False):  # Check if the application is a bundle
+        return sys._MEIPASS  # PyInstaller provides this attribute
+    else:
+        return os.path.abspath(".")
 
 
 if __name__ == "__main__":

@@ -6,7 +6,6 @@ from pathlib import Path
 import typer
 from PIL import ExifTags, Image
 
-from app.cli.ela_nn.ela import check_ela
 from app.cli.inspectors import (
     inspect_copyright,
     inspect_datetime_fields,
@@ -15,9 +14,9 @@ from app.cli.inspectors import (
     inspect_osx_metadata,
 )
 from app.cli.report import generate_report
-from app.cli.utils import (
+from app.utils import (
     DOWNLOAD_TMP_FOLDER,
-    clear_downloaded_images,
+    clean_temp_folders,
     download_images,
     filter_images_or_directories_from_paths,
     is_osxmetadata_package_present,
@@ -25,8 +24,9 @@ from app.cli.utils import (
     print_header,
     print_list_item,
     print_sub_header,
-    print_success,
 )
+from app.ela_nn.ela import check_ela
+from app.ela_nn.model import IMDModel
 
 warnings.filterwarnings("ignore")
 
@@ -54,7 +54,7 @@ PathAnnotation = t.Annotated[
     help="Cleans all the files that were added during the scanning, e.g. downloaded images from the URL",
 )
 def clean() -> None:
-    """To be implemented"""
+    clean_temp_folders()
 
 
 def scan_image(path: PathAnnotation | str) -> list[str]:
@@ -129,8 +129,9 @@ def scan(
     if url:
         download_images(url)
         result = scan_path(DOWNLOAD_TMP_FOLDER)
-        clear_downloaded_images()
         generate_report(result)
+
+    clean_temp_folders()
 
     print_header("Finished image scanner")
 

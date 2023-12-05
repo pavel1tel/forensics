@@ -9,7 +9,7 @@ def setup() -> None:
         with open(main_executable_path) as f:
             lines = f.readlines()
 
-        new_lines = lines[:2] + ["from app.cli.ela_nn.model import IMDModel\n"] + lines[2:]
+        new_lines = lines[:2] + ["from app.ela_nn.model import IMDModel\n"] + lines[2:]
 
         with open(main_executable_path, "w") as f:
             f.writelines(new_lines)
