@@ -10,3 +10,6 @@ venv
 temp/*
 tmp/*
 download_tmp/*
+image_scan.spec
+dist/
+build/
