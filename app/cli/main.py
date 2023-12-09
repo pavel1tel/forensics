@@ -1,4 +1,5 @@
 import os
+import typing
 import typing as t
 import warnings
 from pathlib import Path
@@ -55,10 +56,10 @@ PathAnnotation = t.Annotated[
     help="Cleans all the files that were added during the scanning, e.g. downloaded images from the URL",
 )
 def clean() -> None:
-    clean_temp_folders()
+    clean_temp_folders_and_files()
 
 
-def scan_image(path: PathAnnotation | str) -> list[str]:
+def scan_image(path: typing.Union[PathAnnotation, str]) -> list[str]:
     result = []
     result.append(path)
     img = Image.open(path)
@@ -73,7 +74,7 @@ def scan_image(path: PathAnnotation | str) -> list[str]:
     return result
 
 
-def scan_path(path: PathAnnotation | str) -> list[list[str]]:
+def scan_path(path: t.Union[PathAnnotation, str]) -> list[list[str]]:
     result = []
     if os.path.isdir(path):
         paths = os.listdir(path)
@@ -104,7 +105,7 @@ def ela(path: PathAnnotation) -> None:
     help="Run the metadata fields analysis scan",
 )
 def scan(
-    path: PathAnnotation | None = None,
+    path: t.Optional[PathAnnotation] = None,
     url: t.Optional[str] = None,
 ) -> None:
     if not path and not url:

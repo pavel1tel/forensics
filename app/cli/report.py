@@ -2,7 +2,7 @@ import contextlib
 import itertools
 import os
 import time
-import typing
+import typing as t
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -76,7 +76,7 @@ def truncate_string(input_string: str) -> str:
         return input_string
 
 
-def create_chart_of_eddited_data(data: list[list[typing.Any]]) -> int:
+def create_chart_of_eddited_data(data: list[list[t.Any]]) -> int:
     count_edited = 0
     labels = ["Edited", "Original"]
     colors = ["Red", "green"]
@@ -135,7 +135,7 @@ def build_country_chart(data):
     image.save(f"{TMP_FOLDER}/countryBar.png")
 
 
-def get_reverse_coordinates(lat: float, lng: float) -> dict[str, typing.Any] | None:
+def get_reverse_coordinates(lat: float, lng: float) -> t.Optional[dict[str, t.Any]]:
     time.sleep(2)
     url = f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lng}" \
           f"&format=json&accept-language=en&addressdetails=1"
@@ -170,12 +170,12 @@ def getCountryFromCoordinates(data):
     return result
 
 
-def grouper(iterable: typing.Iterable[typing.Any], n: int) -> typing.Iterable[typing.Any]:
+def grouper(iterable: t.Iterable[t.Any], n: int) -> t.Iterable[t.Any]:
     args = [iter(iterable)] * n
     return itertools.zip_longest(*args)
 
 
-def make_flat(data: list[typing.Any], flat_data: list[typing.Any]) -> None:
+def make_flat(data: list[t.Any], flat_data: list[t.Any]) -> None:
     for item in data:
         if not len(item):
             continue
@@ -190,7 +190,7 @@ def make_flat(data: list[typing.Any], flat_data: list[typing.Any]) -> None:
     return
 
 
-def get_row(x: list[typing.Any]) -> typing.Any:
+def get_row(x: list[t.Any]) -> t.Any:
     filename = os.path.basename(x[0])
 
     if len(x) != 6:
@@ -208,7 +208,7 @@ def get_row(x: list[typing.Any]) -> typing.Any:
     return filename, dto, dt, soft, coop, gps, bool(source), bool(is_edited)
 
 
-def prep_data(data: list[typing.Any]) -> list[tuple[typing.Any, ...]]:
+def prep_data(data: list[t.Any]) -> list[tuple[t.Any, ...]]:
     flat_data = []
     make_flat(data, flat_data)
     result = [

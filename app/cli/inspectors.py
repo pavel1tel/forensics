@@ -34,7 +34,7 @@ def inspector_wrapper(f):
 
 
 @inspector_wrapper
-def inspect_datetime_fields(exif: dict[str, t.Any]) -> list[datetime.datetime | int]:
+def inspect_datetime_fields(exif: dict[str, t.Any]) -> list[datetime.datetime]:
     result = []
     # checking datetime original tag
     datetime_format = "%Y:%m:%d %H:%M:%S"
@@ -103,7 +103,7 @@ def inspect_gps(exif: dict[str, t.Any]) -> list[str]:
 
 
 @inspector_wrapper
-def inspect_osx_metadata(path: PathAnnotation | str) -> list[str | int]:
+def inspect_osx_metadata(path: t.Union[PathAnnotation, str]) -> list[t.Union[str, int]]:
     result = []
     if platform.system() == "Darwin":
         try:
