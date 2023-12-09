@@ -22,7 +22,6 @@ def is_osxmetadata_package_present() -> bool:
     if platform.system() == "Darwin":
         try:
             from osxmetadata import OSXMetaData
-
             return True
         except ImportError:
             return False
@@ -119,10 +118,20 @@ def download_images(url: str, limit: int = 10) -> list[str]:
     return img_paths
 
 
-def clean_temp_folders() -> None:
+def create_temp_folders() -> None:
+    for path in [TMP_FOLDER, DOWNLOAD_TMP_FOLDER]:
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+
+def clean_temp_folders_and_files() -> None:
     for path in [TMP_FOLDER, DOWNLOAD_TMP_FOLDER]:
         if os.path.exists(path):
             shutil.rmtree(path)
+
+    for file in ["temp.jpg"]:
+        if os.path.exists(file):
+            os.remove(file)
 
 
 def get_base_path() -> str:

@@ -22,12 +22,9 @@ PathAnnotation = t.Annotated[
     ),
 ]
 
-P = t.ParamSpec("P")
-R = t.TypeVar("R")
 
-
-def inspector_wrapper(f: t.Callable[P, R]) -> t.Callable[P, R | None]:
-    def inner(*args: P.args, **kwargs: P.kwargs) -> R | None:
+def inspector_wrapper(f):
+    def inner(*args, **kwargs):
         try:
             return f(*args, **kwargs)
         except Exception:

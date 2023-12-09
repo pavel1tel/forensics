@@ -16,7 +16,7 @@ from app.cli.inspectors import (
 from app.cli.report import generate_report
 from app.utils import (
     DOWNLOAD_TMP_FOLDER,
-    clean_temp_folders,
+    clean_temp_folders_and_files,
     download_images,
     filter_images_or_directories_from_paths,
     is_osxmetadata_package_present,
@@ -24,6 +24,7 @@ from app.utils import (
     print_header,
     print_list_item,
     print_sub_header,
+    create_temp_folders,
 )
 from app.ela_nn.ela import check_ela
 from app.ela_nn.model import IMDModel
@@ -89,10 +90,14 @@ def scan_path(path: PathAnnotation | str) -> list[list[str]]:
     help="Run the ELA (Error Level Analysis) scan",
 )
 def ela(path: PathAnnotation) -> None:
+    create_temp_folders()
+
     if not os.path.exists(path):
         print_error_and_exit("file does not exist under the specified path!")
 
     check_ela(str(path))
+
+    clean_temp_folders_and_files()
 
 
 @app.command(
@@ -118,8 +123,7 @@ def scan(
     if is_osxmetadata_package_present():
         print_list_item("osxmetadata fields")
 
-    if not os.path.exists("temp/"):
-        os.makedirs("temp/")
+    create_temp_folders()
 
     if path:
         if not os.path.exists(path):
@@ -131,7 +135,7 @@ def scan(
         result = scan_path(DOWNLOAD_TMP_FOLDER)
         generate_report(result)
 
-    clean_temp_folders()
+    clean_temp_folders_and_files()
 
     print_header("Finished image scanner")
 
